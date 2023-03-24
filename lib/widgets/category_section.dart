@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:football_news/ui/detail_club.dart';
+import 'package:football_news/ui/players_by_club.dart';
 
 
 class CategorySection extends StatefulWidget {
@@ -34,10 +36,7 @@ class _CategorySectionState extends State<CategorySection> {
     return Container(
       decoration: const BoxDecoration(
         color: Color(0xFFF6F8FF),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+
       ),
       child: Column(
         children: [
@@ -48,16 +47,16 @@ class _CategorySectionState extends State<CategorySection> {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (_, index) => Column(
                   children: [
-                    Container(
-                      width: 50,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
+                      Container(
+                        width: 50,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                    ),
-                      child: Image.network(
-                        categories[index]['logo']
+                        ),
+                        child: Image.network(
+                            categories[index]['logo']
+                        ),
                       ),
-                    ),
                     const SizedBox(height: 10),
                     Text(
                         categories[index]['nom'] as String,

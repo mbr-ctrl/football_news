@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:path/path.dart';
 import 'dart:io';
 
 class AddPlayerByClub extends StatefulWidget {
@@ -131,7 +132,7 @@ class _AddPlayerByClubState extends State<AddPlayerByClub> {
             ),
             const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: uploadImageToFirebase,
+              onPressed: chooseImage,
               style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 40.0, vertical: 20.0),
@@ -176,35 +177,27 @@ class _AddPlayerByClubState extends State<AddPlayerByClub> {
     );
   }
 
-  Future<void> chooseImage() async {
+  Future chooseImage() async {
     pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
       });
+      print("Notre image: ${_image}");
     }
-  }
+    print("Deuxieme ${_image}");
 
-
-  Future uploadImageToFirebase() async {
-    chooseImage();
-
-    String fileName = (_image!.path);
-
-    FirebaseStorage firebaseStorageRef = FirebaseStorage.instance;
-
-    Reference ref = firebaseStorageRef.ref().child(
-        'players/$fileName ${DateTime.now()}');
-
-    UploadTask uploadTask = ref.putFile(_image!);
-    uploadTask.whenComplete(() async {
-      try {
-        imageUrl = await ref.getDownloadURL();
-      } catch (onError) {
-        print("Error");
-      }
-      print(imageUrl);
-    });
+    String fileName = basename(_image!.path);
+    print("Mon image ${fileName}");
+    final storageRef = FirebaseStorage.instance.ref();
+    final imgUploadRef = storageRef.child("logoClubs/$fileName");
+    final uploadTask = imgUploadRef..putFile(_image);
+    try {
+      imageUrl = await imgUploadRef.getDownloadURL();
+      print("Mon chemin ${imageUrl}");
+    } catch (onError) {
+      print("Error");
+    }
   }
 }

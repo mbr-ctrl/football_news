@@ -12,8 +12,8 @@ class GetPlayersByClub extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Liste des joueurs"),
-        actions: [
+        title: const Text("Liste des joueurs"),
+        /*actions: [
           IconButton(
               onPressed: () {
                 Navigator.of(context).push(
@@ -27,7 +27,7 @@ class GetPlayersByClub extends StatelessWidget {
             },
               icon: Icon(Icons.add)
           )
-        ],
+        ],*/
       ),
       body: GetPlayers(docID: documentID)
     );

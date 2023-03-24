@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'splash.dart';
 import 'list_page.dart';
 import 'package:football_news/widgets/category_section.dart';
+import 'package:football_news/widgets/heard_section.dart';
+import 'package:football_news/widgets/showCases.dart';
 import 'list_page.dart';
 import 'players_by_club.dart';
 import 'list_clubs.dart';
@@ -56,7 +58,7 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         title: Text(_screens[_selectedTab]['title']),
         centerTitle: true,
-        leading: IconButton(
+        /*leading: IconButton(
             onPressed: () {
               Navigator.of(context).push(
                   MaterialPageRoute(
@@ -68,7 +70,7 @@ class _MainPageState extends State<MainPage> {
               );
             },
             icon: const Icon(Icons.add)
-        ),
+        ),*/
       ),
       body: _screens[_selectedTab]['screen'],
       bottomNavigationBar: Container(
@@ -187,7 +189,9 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: const [
-            CategorySection()
+            HeaderSection(),
+            CategorySection(),
+            ShowCases()
           ],
         )
       ),

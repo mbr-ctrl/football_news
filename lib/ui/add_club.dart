@@ -3,6 +3,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path/path.dart';
 import 'dart:io';
 class AddClub extends StatefulWidget {
   const AddClub({Key? key}) : super(key: key);
@@ -12,8 +14,8 @@ class AddClub extends StatefulWidget {
 }
 
 class _AddClubState extends State<AddClub> {
-   final TextEditingController _nameController = TextEditingController();
-   final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
 
   // final _posterController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
@@ -45,7 +47,7 @@ class _AddClubState extends State<AddClub> {
                   fit: BoxFit.fitHeight,
                 )
                     : const Center(
-                        child: Text("Aucune image sélectionnée"),
+                  child: Text("Aucune image sélectionnée"),
                 )
             ),
 
@@ -91,7 +93,7 @@ class _AddClubState extends State<AddClub> {
             ),
             const SizedBox(height: 30,),
             ElevatedButton(
-              onPressed: uploadImageToFirebase,
+              onPressed: chooseImage,
               style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 40.0, vertical: 20.0),
@@ -107,7 +109,6 @@ class _AddClubState extends State<AddClub> {
             Container(height: 20.0),
             ElevatedButton(
               onPressed: () {
-                print('chemin de image $imageUrl');
                 FirebaseFirestore.instance.collection('club').add(
                     {
                       'nom': _nameController.value.text,
@@ -115,7 +116,7 @@ class _AddClubState extends State<AddClub> {
                       'logo': imageUrl
                     }
                 );
-
+                print("Mon firestore img");
               },
               style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
@@ -134,35 +135,30 @@ class _AddClubState extends State<AddClub> {
     );
   }
 
-  Future<void> chooseImage() async {
+
+  Future chooseImage() async {
     pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
       });
+      print("Notre image: ${_image}");
+    }
+    print("Deuxieme ${_image}");
+
+    String fileName = basename(_image!.path);
+    print("Mon image ${fileName}");
+    final storageRef = FirebaseStorage.instance.ref();
+    final imgUploadRef = storageRef.child("logoClubs/$fileName");
+    final uploadTask = imgUploadRef.putFile(_image);
+    try {
+      imageUrl = await imgUploadRef.getDownloadURL();
+      print("Mon chemin ${imageUrl}");
+    } catch (onError) {
+      print("Error");
     }
   }
-
-
-  Future uploadImageToFirebase() async {
-    chooseImage();
-
-    String fileName = (_image!.path);
-
-    FirebaseStorage firebaseStorageRef = FirebaseStorage.instance;
-
-    Reference ref = firebaseStorageRef.ref().child(
-        'upload/$fileName ${DateTime.now()}');
-
-    UploadTask uploadTask = ref.putFile(_image!);
-    uploadTask.whenComplete(() async {
-      try {
-        imageUrl = await ref.getDownloadURL();
-      } catch (onError) {
-        print("Error");
-      }
-      print(imageUrl);
-    });
-  }
 }
+
+
